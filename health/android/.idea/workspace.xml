@@ -19,6 +19,9 @@
       </state>
     </system>
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="health" />
+  </component>
   <component name="ProjectId" id="1idR1mep97LnK6xyHk1Tslu5sra" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -26,7 +29,11 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DEBUGGABLE_DEVICE" value="samsung-sm_g920f-03157df358760633" />
+    <property name="DEBUGGABLE_PROCESS" value="com.diversido.sandbox" />
+    <property name="DEBUGGER_ID" value="Auto" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHOW_ALL_PROCESSES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
@@ -51,5 +58,51 @@
       <updated>1602235269874</updated>
     </task>
     <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="607" y="363" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602255158030">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state x="607" y="363" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255158030" />
+    <state x="999" y="474" key="AndroidProcessChooserDialog" timestamp="1602255255005">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state x="999" y="474" key="AndroidProcessChooserDialog/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255255005" />
+    <state width="2014" height="444" key="GridCell.Tab.0.bottom" timestamp="1602255359707">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.0.bottom/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359707" />
+    <state width="2014" height="444" key="GridCell.Tab.0.center" timestamp="1602255359706">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.0.center/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359706" />
+    <state width="2014" height="444" key="GridCell.Tab.0.left" timestamp="1602255359706">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.0.left/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359706" />
+    <state width="2014" height="444" key="GridCell.Tab.0.right" timestamp="1602255359707">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.0.right/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359707" />
+    <state width="2014" height="444" key="GridCell.Tab.1.bottom" timestamp="1602255359708">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.1.bottom/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359708" />
+    <state width="2014" height="444" key="GridCell.Tab.1.center" timestamp="1602255359707">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.1.center/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359707" />
+    <state width="2014" height="444" key="GridCell.Tab.1.left" timestamp="1602255359707">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.1.left/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359707" />
+    <state width="2014" height="444" key="GridCell.Tab.1.right" timestamp="1602255359707">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state width="2014" height="444" key="GridCell.Tab.1.right/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255359707" />
+    <state x="215" y="165" width="1856" height="1073" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1602255266593">
+      <screen x="0" y="23" width="2560" height="1339" />
+    </state>
+    <state x="215" y="165" width="1856" height="1073" key="com.android.tools.idea.avdmanager.AvdListDialog/0.23.2560.1339/-1920.281.1920.1057@0.23.2560.1339" timestamp="1602255266593" />
   </component>
 </project>

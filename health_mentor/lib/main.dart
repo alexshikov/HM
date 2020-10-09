@@ -32,11 +32,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<HealthDataPoint> nutrition = List<HealthDataPoint>();
-  TextEditingController proteinTextController = TextEditingController();
+  var fatTextController = TextEditingController();
+  var proteinTextController = TextEditingController();
+  var carbohydratsTextController = TextEditingController();
 
   Future<List<HealthDataPoint>> readHealthData() async {
     List<HealthDataPoint> _healthDataList = [];
-    DateTime startDate = DateTime.utc(2001, 01, 01);
+    DateTime startDate = DateTime.now().subtract(Duration(days: 7));
     DateTime endDate = DateTime.now();
 
     HealthFactory health = HealthFactory();
@@ -66,16 +68,39 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<bool> writeHealthData() async {
     DateTime date = DateTime.now();
     HealthFactory health = HealthFactory();
-    var a = double.tryParse(proteinTextController.text);
-    if (a == null) {
-      return false;
+    var fat = double.tryParse(fatTextController.text);
+    var protein = double.tryParse(proteinTextController.text);
+    var carbohydrates = double.tryParse(carbohydratsTextController.text);
+
+    if (fat != null) {
+      var a = await health.writeHealthData(
+        date,
+        date,
+        HealthDataType.DIETARY_FAT_TOTAL,
+        fat,
+      );
     }
-    return await health.writeHealthData(
-      date,
-      date,
-      HealthDataType.DIETARY_FAT_TOTAL,
-      a,
-    );
+
+    if (protein != null) {
+      var b = await health.writeHealthData(
+        date,
+        date,
+        HealthDataType.DIETARY_PROTEIN,
+        protein,
+      );
+      var c = b;
+    }
+
+    if (carbohydrates != null) {
+      var c = await health.writeHealthData(
+        date,
+        date,
+        HealthDataType.DIETARY_CARBOHYDRATES,
+        carbohydrates,
+      );
+    }
+
+    return true;
   }
 
   @override
@@ -98,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   border: Border.all(color: Colors.black),
                 ),
                 child: Text(
-                  'From: ${DateFormat('dd/MM/yyyy').format(DateTime.now().subtract(Duration(days: 365)))}',
+                  'From: ${DateFormat('dd/MM/yyyy').format(DateTime.now().subtract(Duration(days: 7)))}',
                 ),
               ),
               Container(
@@ -108,30 +133,99 @@ class _MyHomePageState extends State<MyHomePage> {
                   border: Border.all(color: Colors.black),
                 ),
                 child: Text(
-                  'To: ${DateFormat('dd/MM/yyyy').format(DateTime.now().subtract(Duration(days: 365)))}',
+                  'To: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
                 ),
               ),
             ],
           ),
+          SizedBox(height: 8),
           Expanded(
-            child: ListView(
-              children: nutrition
-                  .map(
-                    (e) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      height: 60,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(e.typeString),
-                          Text('${e.value.toString()}')
-                        ],
+              child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Text('Fat'),
+                    Expanded(
+                      child: ListView(
+                        children: nutrition
+                            .where((element) =>
+                                element.type ==
+                                HealthDataType.DIETARY_FAT_TOTAL)
+                            .map(
+                              (e) => Container(
+                                alignment: Alignment.center,
+                                height: 30,
+                                child: Text(
+                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value}'),
+                              ),
+                            )
+                            .toList(),
                       ),
                     ),
-                  )
-                  .toList(),
-            ),
-          ),
+                    SizedBox(height: 8),
+                    Text(
+                        'Total: ${nutrition.where((element) => element.type == HealthDataType.DIETARY_FAT_TOTAL).map((e) => e.value).fold(0, (value, element) => value + element)}'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text('Protein'),
+                    Expanded(
+                      child: ListView(
+                        children: nutrition
+                            .where((element) =>
+                                element.type == HealthDataType.DIETARY_PROTEIN)
+                            .map(
+                              (e) => Container(
+                                alignment: Alignment.center,
+                                height: 30,
+                                child: Text(
+                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value}'),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Total: ${nutrition.isEmpty ? 0 : nutrition.where((element) => element.type == HealthDataType.DIETARY_PROTEIN).map((e) => e.value).fold(0, (value, element) => value + element)}',
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text('Carbo'),
+                    Expanded(
+                      child: ListView(
+                        children: nutrition
+                            .where((element) =>
+                                element.type ==
+                                HealthDataType.DIETARY_CARBOHYDRATES)
+                            .map(
+                              (e) => Container(
+                                alignment: Alignment.center,
+                                height: 30,
+                                child: Text(
+                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value}'),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Total: ${nutrition.isEmpty ? 0 : nutrition.where((element) => element.type == HealthDataType.DIETARY_CARBOHYDRATES).map((e) => e.value).fold(0, (value, element) => value + element)}',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )),
           TextButton(
             child: Text('Read'),
             onPressed: () async {
@@ -142,8 +236,22 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: TextField(
+              decoration: InputDecoration(hintText: 'Amount of fat'),
+              controller: fatTextController,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: TextField(
               decoration: InputDecoration(hintText: 'Amount of protein'),
               controller: proteinTextController,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: TextField(
+              decoration: InputDecoration(hintText: 'Amount of carbohydrates'),
+              controller: carbohydratsTextController,
             ),
           ),
           TextButton(
@@ -153,7 +261,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 nutrition = await readHealthData();
                 setState(() {});
               }
+              fatTextController.clear();
               proteinTextController.clear();
+              carbohydratsTextController.clear();
             },
           ),
         ],
