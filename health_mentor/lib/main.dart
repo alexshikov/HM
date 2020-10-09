@@ -157,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 alignment: Alignment.center,
                                 height: 30,
                                 child: Text(
-                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value}'),
+                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value.toInt()}'),
                               ),
                             )
                             .toList(),
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                        'Total: ${nutrition.where((element) => element.type == HealthDataType.DIETARY_FAT_TOTAL).map((e) => e.value).fold(0, (value, element) => value + element)}'),
+                        'Total: ${nutrition.where((element) => element.type == HealthDataType.DIETARY_FAT_TOTAL).map((e) => e.value).fold(0, (value, element) => value + element.toInt())}'),
                   ],
                 ),
               ),
@@ -183,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 alignment: Alignment.center,
                                 height: 30,
                                 child: Text(
-                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value}'),
+                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value.toInt()}'),
                               ),
                             )
                             .toList(),
@@ -191,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Total: ${nutrition.isEmpty ? 0 : nutrition.where((element) => element.type == HealthDataType.DIETARY_PROTEIN).map((e) => e.value).fold(0, (value, element) => value + element)}',
+                      'Total: ${nutrition.isEmpty ? 0 : nutrition.where((element) => element.type == HealthDataType.DIETARY_PROTEIN).map((e) => e.value).fold<int>(0, (value, element) => value + element.toInt())}',
                     ),
                   ],
                 ),
@@ -211,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 alignment: Alignment.center,
                                 height: 30,
                                 child: Text(
-                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value}'),
+                                    '${DateFormat('dd/MM').format(e.dateTo)}: ${e.value.toInt()}'),
                               ),
                             )
                             .toList(),
@@ -219,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Total: ${nutrition.isEmpty ? 0 : nutrition.where((element) => element.type == HealthDataType.DIETARY_CARBOHYDRATES).map((e) => e.value).fold(0, (value, element) => value + element)}',
+                      'Total: ${nutrition.isEmpty ? 0 : nutrition.where((element) => element.type == HealthDataType.DIETARY_CARBOHYDRATES).map((e) => e.value).fold(0, (value, element) => value + element.toInt())}',
                     ),
                   ],
                 ),
