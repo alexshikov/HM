@@ -1,4 +1,4 @@
-package com.example.health_mentor
+package com.diversido.sandbox
 
 import io.flutter.embedding.android.FlutterActivity
 

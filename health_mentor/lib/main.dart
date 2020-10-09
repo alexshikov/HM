@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,15 +31,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  List<HealthDataPoint> nutrition = List<HealthDataPoint>();
+  TextEditingController proteinTextController = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  Future readHealthData() async {
+  Future<List<HealthDataPoint>> readHealthData() async {
     List<HealthDataPoint> _healthDataList = [];
     DateTime startDate = DateTime.utc(2001, 01, 01);
     DateTime endDate = DateTime.now();
@@ -48,6 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
     /// Define the types to get.
     List<HealthDataType> types = [
       HealthDataType.DIETARY_FAT_TOTAL,
+      HealthDataType.DIETARY_PROTEIN,
+      HealthDataType.DIETARY_CARBOHYDRATES,
     ];
 
     if (await health.requestAuthorization(types, types)) {
@@ -60,12 +58,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
       /// Filter out duplicates
       _healthDataList = HealthFactory.removeDuplicates(_healthDataList);
+      return _healthDataList;
     }
+    return null;
   }
 
-  Future writeHealthData() async {
+  Future<bool> writeHealthData() async {
+    DateTime date = DateTime.now();
     HealthFactory health = HealthFactory();
-    await health.writeHealthData(null, null, null, null);
+    var a = double.tryParse(proteinTextController.text);
+    if (a == null) {
+      return false;
+    }
+    return await health.writeHealthData(
+      date,
+      date,
+      HealthDataType.DIETARY_FAT_TOTAL,
+      a,
+    );
   }
 
   @override
@@ -74,36 +84,79 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.black),
+                ),
+                child: Text(
+                  'From: ${DateFormat('dd/MM/yyyy').format(DateTime.now().subtract(Duration(days: 365)))}',
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.black),
+                ),
+                child: Text(
+                  'To: ${DateFormat('dd/MM/yyyy').format(DateTime.now().subtract(Duration(days: 365)))}',
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView(
+              children: nutrition
+                  .map(
+                    (e) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      height: 60,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(e.typeString),
+                          Text('${e.value.toString()}')
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+          ),
+          TextButton(
+            child: Text('Read'),
+            onPressed: () async {
+              nutrition = await readHealthData();
+              setState(() {});
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: TextField(
+              decoration: InputDecoration(hintText: 'Amount of protein'),
+              controller: proteinTextController,
             ),
-            TextButton(
-              child: Text('Read'),
-              onPressed: () {
-                readHealthData();
-              },
-            ),
-            TextButton(
-              child: Text('Write'),
-              onPressed: () {
-                writeHealthData();
-              },
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
+          ),
+          TextButton(
+            child: Text('Write'),
+            onPressed: () async {
+              if (await writeHealthData()) {
+                nutrition = await readHealthData();
+                setState(() {});
+              }
+              proteinTextController.clear();
+            },
+          ),
+        ],
       ),
     );
   }

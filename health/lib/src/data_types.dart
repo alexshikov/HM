@@ -29,6 +29,8 @@ enum HealthDataType {
   SLEEP_ASLEEP,
   SLEEP_AWAKE,
   DIETARY_FAT_TOTAL,
+  DIETARY_PROTEIN,
+  DIETARY_CARBOHYDRATES,
 
 // Heart Rate events (specific to Apple Watch)
   HIGH_HEART_RATE_EVENT,
@@ -68,6 +70,8 @@ const List<HealthDataType> _dataTypeKeysIOS = [
   HealthDataType.SLEEP_ASLEEP,
   HealthDataType.WATER,
   HealthDataType.DIETARY_FAT_TOTAL,
+  HealthDataType.DIETARY_PROTEIN,
+  HealthDataType.DIETARY_CARBOHYDRATES,
 ];
 
 /// List of data types available on Android

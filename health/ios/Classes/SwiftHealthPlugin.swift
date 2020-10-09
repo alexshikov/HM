@@ -9,6 +9,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     var heartRateEventTypes = Set<HKSampleType>()
     var allDataTypes = Set<HKSampleType>()
     var dataTypesDict: [String: HKSampleType] = [:]
+    var quantityTypesDict: [String: HKQuantityType] = [:]
     var unitDict: [String: HKUnit] = [:]
 
     // Health Data Type Keys
@@ -36,6 +37,8 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     let DISTANCE_WALKING_RUNNING = "DISTANCE_WALKING_RUNNING"
     let FLIGHTS_CLIMBED = "FLIGHTS_CLIMBED"
     let DIETARY_FAT_TOTAL = "DIETARY_FAT_TOTAL"
+    let DIETARY_PROTEIN = "DIETARY_PROTEIN"
+    let DIETARY_CARBOHYDRATES = "DIETARY_CARBOHYDRATES"
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "flutter_health", binaryMessenger: registrar.messenger())
@@ -135,16 +138,26 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     }
 
     func writeData(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let datatype = HKQuantityType.quantityType(forIdentifier: .dietaryFatTotal)
-        let unitType = HKUnit.gram()
-        let quantity = HKQuantity(unit: unitType, doubleValue: 200)
-        let date = Date(timeIntervalSinceNow: TimeInterval());
-        let sample = HKQuantitySample(type: datatype!, quantity: quantity, start: date, end: date)
+        let arguments = call.arguments as? NSDictionary
+        let dataTypeKey = (arguments?["dataTypeKey"] as? String) ?? "DEFAULT"
+        let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
+        let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
+        let value = (arguments?["value"] as? NSNumber) ?? 0
+
+        let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
+        let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
+        let dataType = quantityTypeLookUp(key: dataTypeKey)
+        let unit = unitLookUp(key: dataTypeKey)
+
+        let quantity = HKQuantity(unit: unit, doubleValue: value.doubleValue)
+        let sample = HKQuantitySample(type: dataType, quantity: quantity, start: dateFrom, end: dateTo)
         HKHealthStore().save(sample) { (success, error) in
             if let error = error {
              print("Error Saving Steps Count Sample: \(error.localizedDescription)")
+             result(false)
          } else {
              print("Successfully saved Steps Count Sample")
+            result(true)
          }
         }
     }
@@ -162,6 +175,14 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         }
         return dataType_
     }
+    
+    func quantityTypeLookUp(key: String) -> HKQuantityType {
+        guard let dataType_ = quantityTypesDict[key] else {
+            return HKQuantityType.quantityType(forIdentifier: .bodyMass)!
+        }
+        return dataType_
+    }
+
 
     func initializeTypes() {
         unitDict[ACTIVE_ENERGY_BURNED] = HKUnit.kilocalorie()
@@ -183,8 +204,10 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         unitDict[WALKING_HEART_RATE] = HKUnit.init(from: "count/min")
         unitDict[WEIGHT] = HKUnit.gramUnit(with: .kilo)
         unitDict[DISTANCE_WALKING_RUNNING] = HKUnit.meter()
-        unitDict[DIETARY_FAT_TOTAL] = HKUnit.gram()
         unitDict[FLIGHTS_CLIMBED] = HKUnit.count()
+        unitDict[DIETARY_FAT_TOTAL] = HKUnit.gram()
+        unitDict[DIETARY_PROTEIN] = HKUnit.gram()
+        unitDict[DIETARY_CARBOHYDRATES] = HKUnit.gram()
         
 
         // Set up iOS 11 specific types (ordinary health data types)
@@ -210,6 +233,32 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             dataTypesDict[DISTANCE_WALKING_RUNNING] = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
             dataTypesDict[FLIGHTS_CLIMBED] = HKSampleType.quantityType(forIdentifier: .flightsClimbed)!
             dataTypesDict[DIETARY_FAT_TOTAL] = HKSampleType.quantityType(forIdentifier: .dietaryFatTotal)!
+            dataTypesDict[DIETARY_PROTEIN] = HKSampleType.quantityType(forIdentifier: .dietaryProtein)!
+            dataTypesDict[DIETARY_CARBOHYDRATES] = HKSampleType.quantityType(forIdentifier: .dietaryCarbohydrates)!
+            
+            quantityTypesDict[ACTIVE_ENERGY_BURNED] = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
+            quantityTypesDict[BASAL_ENERGY_BURNED] = HKQuantityType.quantityType(forIdentifier: .basalEnergyBurned)!
+            quantityTypesDict[BLOOD_GLUCOSE] = HKQuantityType.quantityType(forIdentifier: .bloodGlucose)!
+            quantityTypesDict[BLOOD_OXYGEN] = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation)!
+            quantityTypesDict[BLOOD_PRESSURE_DIASTOLIC] = HKQuantityType.quantityType(forIdentifier: .bloodPressureDiastolic)!
+            quantityTypesDict[BLOOD_PRESSURE_SYSTOLIC] = HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic)!
+            quantityTypesDict[BODY_FAT_PERCENTAGE] = HKQuantityType.quantityType(forIdentifier: .bodyFatPercentage)!
+            quantityTypesDict[BODY_MASS_INDEX] = HKQuantityType.quantityType(forIdentifier: .bodyMassIndex)!
+            quantityTypesDict[BODY_TEMPERATURE] = HKQuantityType.quantityType(forIdentifier: .bodyTemperature)!
+            quantityTypesDict[ELECTRODERMAL_ACTIVITY] = HKQuantityType.quantityType(forIdentifier: .electrodermalActivity)!
+            quantityTypesDict[HEART_RATE] = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+            quantityTypesDict[HEART_RATE_VARIABILITY_SDNN] = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!
+            quantityTypesDict[HEIGHT] = HKQuantityType.quantityType(forIdentifier: .height)!
+            quantityTypesDict[RESTING_HEART_RATE] = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
+            quantityTypesDict[STEPS] = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+            quantityTypesDict[WAIST_CIRCUMFERENCE] = HKQuantityType.quantityType(forIdentifier: .waistCircumference)!
+            quantityTypesDict[WALKING_HEART_RATE] = HKQuantityType.quantityType(forIdentifier: .walkingHeartRateAverage)!
+            quantityTypesDict[WEIGHT] = HKQuantityType.quantityType(forIdentifier: .bodyMass)!
+            quantityTypesDict[DISTANCE_WALKING_RUNNING] = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            quantityTypesDict[FLIGHTS_CLIMBED] = HKQuantityType.quantityType(forIdentifier: .flightsClimbed)!
+            quantityTypesDict[DIETARY_FAT_TOTAL] = HKQuantityType.quantityType(forIdentifier: .dietaryFatTotal)!
+            dataTypesDict[DIETARY_PROTEIN] = HKQuantityType.quantityType(forIdentifier: .dietaryProtein)!
+            dataTypesDict[DIETARY_CARBOHYDRATES] = HKQuantityType.quantityType(forIdentifier: .dietaryCarbohydrates)!
 
             healthDataTypes = Array(dataTypesDict.values)
         }

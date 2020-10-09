@@ -100,16 +100,24 @@ class HealthFactory {
     double value,
   ) async {
     var granted = await requestAuthorization([type], [type]);
+
     if (granted) {
+      Map<String, dynamic> args = {
+        'dataTypeKey': _enumToString(type),
+        'startDate': startDate.millisecondsSinceEpoch,
+        'endDate': endDate.millisecondsSinceEpoch,
+        'value': value,
+      };
+
       try {
-        List fetchedDataPoints =
-            await _channel.invokeMethod('writeData', <String, dynamic>{});
-        return true;
+        bool writeDataResult = await _channel.invokeMethod('writeData', args);
+        return writeDataResult;
       } catch (error) {
         print(error);
         return false;
       }
     }
+    return false;
   }
 
   /// Prepares a query, i.e. checks if the types are available, etc.
