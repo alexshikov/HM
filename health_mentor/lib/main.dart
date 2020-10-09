@@ -1,22 +1,33 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:intl/intl.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done)
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            home: MyHomePage(title: 'Flutter Demo Home Page'),
+          );
+        else
+          return Container();
+      },
     );
   }
 }
@@ -45,9 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     /// Define the types to get.
     List<HealthDataType> types = [
-      HealthDataType.DIETARY_FAT_TOTAL,
-      HealthDataType.DIETARY_PROTEIN,
-      HealthDataType.DIETARY_CARBOHYDRATES,
+      HealthDataType.WEIGHT,
+      HealthDataType.BODY_MASS_INDEX,
     ];
 
     if (await health.requestAuthorization(types, types)) {
@@ -229,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
           TextButton(
             child: Text('Read'),
             onPressed: () async {
-              nutrition = await readHealthData();
+              nutrition = (await readHealthData()) ?? [];
               setState(() {});
             },
           ),

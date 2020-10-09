@@ -75,10 +75,10 @@ class HealthFactory {
       DateTime startDate, DateTime endDate, List<HealthDataType> types) async {
     List<HealthDataPoint> dataPoints = [];
     bool granted = await requestAuthorization(types, types);
-    for (HealthDataType type in types) {
-      bool p = await requestAuthorization([type], [type]);
-      print('$type, $p');
-    }
+    // for (HealthDataType type in types) {
+    //   bool p = await requestAuthorization([type], [type]);
+    //   print('$type, $p');
+    // }
 
     if (!granted) {
       String api =
