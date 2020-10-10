@@ -141,6 +141,10 @@ class HealthFactory {
         _platformType == PlatformType.ANDROID) {
       return _computeAndroidBMI(startDate, endDate);
     }
+    if (dataType == HealthDataType.NUTRIENTS &&
+        _platformType == PlatformType.ANDROID) {
+      return _nutrientsQuery(startDate, endDate);
+    }
     return await _dataQuery(startDate, endDate, dataType);
   }
 
@@ -173,6 +177,50 @@ class HealthFactory {
     }
     return healthData;
   }
+
+  /// Fetch Nutrients for Android
+  Future<List<HealthDataPoint>> _nutrientsQuery(DateTime startDate, DateTime endDate) async {
+    // Set parameters for method channel request
+    Map<String, dynamic> args = {
+      'dataTypeKey': _enumToString(HealthDataType.NUTRIENTS),
+      'startDate': startDate.millisecondsSinceEpoch,
+      'endDate': endDate.millisecondsSinceEpoch
+    };
+
+    List<HealthDataPoint> healthData = new List();
+    HealthDataUnit unit = _dataTypeToUnit[HealthDataType.NUTRIENTS];
+
+    try {
+      List fetchedDataPoints = await _channel.invokeMethod('getData', args);
+
+      if (fetchedDataPoints == null) {
+        return [];
+      }
+
+      var list = List<HealthDataPoint>();
+      for (var dataPoint in fetchedDataPoints) {
+
+        var nutrition = jsonDecode(dataPoint["value"]);
+        num fat = nutrition["fat.total"];
+        num protein = nutrition["protein"];
+        num carbs = nutrition["carbs.total"];
+
+        DateTime from = DateTime.fromMillisecondsSinceEpoch(dataPoint["date_from"]);
+        DateTime to = DateTime.fromMillisecondsSinceEpoch(dataPoint["date_to"]);
+
+        list.add(HealthDataPoint._(fat, HealthDataType.DIETARY_FAT_TOTAL, unit, from, to, _platformType, _deviceId));
+        list.add(HealthDataPoint._(protein, HealthDataType.DIETARY_PROTEIN, unit, from, to, _platformType, _deviceId));
+        list.add(HealthDataPoint._(carbs, HealthDataType.DIETARY_CARBOHYDRATES, unit, from, to, _platformType, _deviceId));
+      }
+
+      return list;
+    } catch (error) {
+      print("Health Plugin Error:\n");
+      print("\t$error");
+    }
+    return healthData;
+  }
+
 
   /// Given an array of [HealthDataPoint]s, this method will return the array
   /// without any duplicates.

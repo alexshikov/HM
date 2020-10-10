@@ -56,8 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     /// Define the types to get.
     List<HealthDataType> types = [
-      HealthDataType.WEIGHT,
-      HealthDataType.BODY_MASS_INDEX,
+      HealthDataType.NUTRIENTS,
+      // HealthDataType.DIETARY_FAT_TOTAL,
+      // HealthDataType.DIETARY_PROTEIN,
+      // HealthDataType.DIETARY_CARBOHYDRATES
     ];
 
     if (await health.requestAuthorization(types, types)) {

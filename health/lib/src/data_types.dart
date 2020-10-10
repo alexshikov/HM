@@ -31,6 +31,7 @@ enum HealthDataType {
   DIETARY_FAT_TOTAL,
   DIETARY_PROTEIN,
   DIETARY_CARBOHYDRATES,
+  NUTRIENTS,
 
 // Heart Rate events (specific to Apple Watch)
   HIGH_HEART_RATE_EVENT,
@@ -91,7 +92,7 @@ const List<HealthDataType> _dataTypeKeysAndroid = [
   HealthDataType.MOVE_MINUTES,
   HealthDataType.DISTANCE_DELTA,
   HealthDataType.WATER,
-  HealthDataType.DIETARY_FAT_TOTAL,
+  HealthDataType.NUTRIENTS,
 ];
 
 /// Map a [HealthDataType] to a [HealthDataUnit].

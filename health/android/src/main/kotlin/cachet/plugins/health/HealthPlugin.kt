@@ -6,19 +6,24 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.result.DataReadResponse
+import com.google.android.gms.fitness.data.DataPoint
+import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.tasks.Tasks
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 import android.content.Intent
 import android.os.Handler
 import android.util.Log
-import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import com.google.android.gms.fitness.data.*
+import org.json.JSONObject
+import kotlin.collections.HashMap
 
 const val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1111
 
@@ -40,7 +45,7 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
     private var BLOOD_GLUCOSE = "BLOOD_GLUCOSE"
     private var MOVE_MINUTES = "MOVE_MINUTES"
     private var DISTANCE_DELTA = "DISTANCE_DELTA"
-
+    private var NUTRIENTS = "NUTRIENTS"
 
     companion object {
         @JvmStatic
@@ -117,6 +122,7 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
             BLOOD_GLUCOSE -> HealthDataTypes.TYPE_BLOOD_GLUCOSE
             MOVE_MINUTES -> DataType.TYPE_MOVE_MINUTES
             DISTANCE_DELTA -> DataType.TYPE_DISTANCE_DELTA
+            NUTRIENTS -> DataType.TYPE_NUTRITION
             else -> DataType.TYPE_STEP_COUNT_DELTA
         }
     }
@@ -136,12 +142,17 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
             BLOOD_GLUCOSE -> HealthFields.FIELD_BLOOD_GLUCOSE_LEVEL
             MOVE_MINUTES -> Field.FIELD_DURATION
             DISTANCE_DELTA -> Field.FIELD_DISTANCE
+            NUTRIENTS -> Field.FIELD_NUTRIENTS
             else -> Field.FIELD_PERCENTAGE
         }
     }
 
     /// Extracts the (numeric) value from a Health Data Point
     private fun getHealthDataValue(dataPoint: DataPoint, unit: Field): Any {
+        if (unit == Field.FIELD_NUTRIENTS) {
+            return getNutrientsAsJsonString(dataPoint.getValue(unit))
+        }
+
         return try {
             dataPoint.getValue(unit).asFloat()
         } catch (e1: Exception) {
@@ -155,6 +166,16 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
                 }
             }
         }
+    }
+
+    private fun getNutrientsAsJsonString(value: Value): String {
+        var json = JSONObject()
+
+        json.put(Field.NUTRIENT_TOTAL_FAT, value.getKeyValue(Field.NUTRIENT_TOTAL_FAT))
+        json.put(Field.NUTRIENT_PROTEIN, value.getKeyValue(Field.NUTRIENT_PROTEIN))
+        json.put(Field.NUTRIENT_TOTAL_CARBS, value.getKeyValue(Field.NUTRIENT_TOTAL_CARBS))
+
+        return json.toString()
     }
 
     /// Called when the "getHealthDataByType" is invoked from Flutter
