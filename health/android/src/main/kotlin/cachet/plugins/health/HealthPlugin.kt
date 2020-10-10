@@ -57,24 +57,6 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
         }
     }
 
-
-    /// DataTypes to register
-    private val fitnessOptions = FitnessOptions.builder()
-            .addDataType(keyToHealthDataType(BODY_FAT_PERCENTAGE), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(HEIGHT), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(WEIGHT), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(STEPS), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(ACTIVE_ENERGY_BURNED), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(HEART_RATE), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(BODY_TEMPERATURE), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(BLOOD_PRESSURE_SYSTOLIC), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(BLOOD_OXYGEN), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(BLOOD_GLUCOSE), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(MOVE_MINUTES), FitnessOptions.ACCESS_READ)
-            .addDataType(keyToHealthDataType(DISTANCE_DELTA), FitnessOptions.ACCESS_READ)
-            .build()
-
-
     override fun success(p0: Any?) {
         handler?.post(
                 Runnable { result?.success(p0) })
@@ -194,9 +176,10 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
         thread {
             try {
 
-                val googleSignInAccount = GoogleSignIn.getAccountForExtension(activity.applicationContext, fitnessOptions)
+                val fitnessOptions = callToHealthTypes(call)
 
-                val response = Fitness.getHistoryClient(activity.applicationContext, googleSignInAccount)
+                var account = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
+                val response = Fitness.getHistoryClient(activity, account)
                         .readData(DataReadRequest.Builder()
                                 .read(dataType)
                                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
@@ -217,6 +200,8 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
                 }
                 activity.runOnUiThread { result.success(healthData) }
             } catch (e3: Exception) {
+                Log.d("FLUTTER_HEALTH", "Failed to read data of type " + type, e3)
+
                 activity.runOnUiThread { result.success(null) }
             }
         }
@@ -227,7 +212,7 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
         val args = call.arguments as HashMap<*, *>
         for (key in args) {
             val dataType = keyToHealthDataType(key.toString())
-            typesBuilder.addDataType(dataType)
+            typesBuilder.addDataType(dataType, FitnessOptions.ACCESS_WRITE)
         }
         return typesBuilder.build()
     }
@@ -237,16 +222,18 @@ class HealthPlugin(val activity: Activity, val channel: MethodChannel) : MethodC
         val optionsToRegister = callToHealthTypes(call)
         mResult = result
 
+        var account = GoogleSignIn.getAccountForExtension(activity, optionsToRegister)
         /// Not granted? Ask for permission
-        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(activity), fitnessOptions)) {
+        if (!GoogleSignIn.hasPermissions(account, optionsToRegister)) {
             GoogleSignIn.requestPermissions(
                     activity,
                     GOOGLE_FIT_PERMISSIONS_REQUEST_CODE,
-                    GoogleSignIn.getLastSignedInAccount(activity),
+                    account,
                     optionsToRegister)
         }
         /// Permission already granted
         else {
+            Log.d("FLUTTER_HEALTH", "Permissions already granted")
             mResult?.success(true)
         }
     }
