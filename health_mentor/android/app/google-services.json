@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "751899162867",
-    "firebase_url": "https://potent-airfoil-292009.firebaseio.com",
-    "project_id": "potent-airfoil-292009",
-    "storage_bucket": "potent-airfoil-292009.appspot.com"
+    "project_number": "712194887095",
+    "firebase_url": "https://healthmentortest.firebaseio.com",
+    "project_id": "healthmentortest",
+    "storage_bucket": "healthmentortest.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:751899162867:android:5ab8638b9703497a8b5f86",
+        "mobilesdk_app_id": "1:712194887095:android:2e8a07f49b26560a2dac32",
         "android_client_info": {
-          "package_name": "com.diversido.healthMentor"
+          "package_name": "com.diversido.healthmentortest"
         }
       },
       "oauth_client": [
         {
-          "client_id": "751899162867-g7svqg8ff2qvgs9e7qujjq09rdk23l93.apps.googleusercontent.com",
+          "client_id": "712194887095-c82lchda26rpiqacf9m0kjoe83urln75.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.diversido.healthMentor",
-            "certificate_hash": "e6466f4dec9b2044a7d43859d1d000a55cbcf89c"
+            "package_name": "com.diversido.healthmentortest",
+            "certificate_hash": "b59db591b365bd10840dea3ffa2e497e8bda273d"
           }
         },
         {
-          "client_id": "751899162867-60v082me2k04kjlbhgaigui7ukhatnvp.apps.googleusercontent.com",
+          "client_id": "712194887095-rdk5mdcfa735j2vmg0uij790nv86umd4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyATYDXkJLD4DP13Vc4JU3z0BePBJcUsqK0"
+          "current_key": "AIzaSyDHs31N7btqoHbKQ28KOpgGkt0gV7O6SPk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "751899162867-60v082me2k04kjlbhgaigui7ukhatnvp.apps.googleusercontent.com",
+              "client_id": "712194887095-rdk5mdcfa735j2vmg0uij790nv86umd4.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

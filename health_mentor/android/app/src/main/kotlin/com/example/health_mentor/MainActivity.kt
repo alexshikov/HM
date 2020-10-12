@@ -1,4 +1,4 @@
-package com.diversido.healthMentor
+package com.diversido.healthmentortest
 
 import io.flutter.embedding.android.FlutterActivity
 
